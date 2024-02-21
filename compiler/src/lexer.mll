@@ -27,6 +27,7 @@
 
     "bool"  , T_BOOL ;
     "int"   , T_INT  ;
+    "usize" , T_SIZE ;
     
     "const" , CONSTANT; 
     "downto", DOWNTO ;
@@ -181,6 +182,7 @@ rule main = parse
   | "="  { EQ       }
   | "==" { EQEQ     }
   | "!=" { BANGEQ   }
+  | "usize" { T_SIZE }
 
   | _ as c  { invalid_char (L.of_lexbuf lexbuf) c }
   | eof     { EOF }

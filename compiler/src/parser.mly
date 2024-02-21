@@ -20,7 +20,7 @@
 %token RPAREN
 
 %token T_BOOL
-%token T_U8 T_U16 T_U32 T_U64 T_U128 T_U256 T_INT 
+%token T_U8 T_U16 T_U32 T_U64 T_U128 T_U256 T_INT T_SIZE
 
 %token SHARP
 %token AMP
@@ -158,6 +158,11 @@ utype:
 | T_U64  { Wsize.U64  }
 | T_U128 { Wsize.U128 }
 | T_U256 { Wsize.U256 }
+| T_SIZE { 
+    match !Glob_options.target_arch with
+    | X86_64 -> Wsize.U64
+    | ARM_M4 -> Wsize.U32
+  }
 
 ptype_r:
 | T_BOOL
