@@ -13,6 +13,12 @@ module Ms = Map.Make(String)
 (* -------------------------------------------------------------------- *)
 let identity x = x
 
+(* 
+  Function composition operator. 
+  Combines two functions [g] and [f] into a new function that applies [f] to 
+  its input and then applies [g] to the result. 
+  Same as Haskell's (.) operator.
+*)
 let (|-) g f = fun x -> g (f x)
 
 (* -------------------------------------------------------------------- *)
@@ -23,15 +29,52 @@ type 'a tuple3 = 'a * 'a * 'a
 type 'a pair   = 'a * 'a
 
 (* -------------------------------------------------------------------- *)
+
+(* 
+  This function checks if a given list is empty.
+  If the list is empty, it evaluates to `()`. Otherwise, it raises an assertion failure.
+  chatgpt ==> It is useful for enforcing invariants where a list is expected to be empty at a certain point in the program.
+*)
 let as_seq0 = function [] -> () | _ -> assert false
+
+(* 
+  This function checks if a given list has exactly one element.
+  If the list has exactly one element, it evaluates to that element. Otherwise, it raises an assertion failure.
+  chatgpt ==> It is useful for enforcing invariants where a list is expected to have exactly one element at a certain point in the program.
+*)
 let as_seq1 = function [x] -> x | _ -> assert false
+
+(* 
+  This function checks if a given list has exactly two elements.
+  If the list has exactly two elements, it evaluates to a tuple of those two elements. Otherwise, it raises an assertion failure.
+  chatgpt ==> It is useful for enforcing invariants where a list is expected to have exactly two elements at a certain point in the program.
+*)
 let as_seq2 = function [x1; x2] -> (x1, x2) | _ -> assert false
+
+(* 
+  This function checks if a given list has exactly three elements.
+  If the list has exactly three elements, it evaluates to a tuple of those three elements. Otherwise, it raises an assertion failure.
+  chatgpt ==> It is useful for enforcing invariants where a list is expected to have exactly three elements at a certain point in the program.
+*)
 let as_seq3 = function [x1; x2; x3] -> (x1, x2, x3) | _ -> assert false
 
 (* -------------------------------------------------------------------- *)
-module Option = BatOption
+(* 
+  Module for option from Batteries. 
+  See https://ocaml-batteries-team.github.io/batteries-included/hdoc2/BatOption.html for documentation
+*)
+module Option = BatOption 
 
 (* -------------------------------------------------------------------- *)
+
+(** [oget ?exn x] extracts the value from an option [x]. 
+  - If [x] is [Some v], it returns [v].
+  - If [x] is [None] and [exn] is provided, it raises the exception [exn].
+  - If [x] is [None] and [exn] is not provided, it triggers an assertion failure.
+  
+  - exn is an optional exception to raise if [x] is [None].
+  - x is the option to extract the value from.
+*)
 let oget ?exn (x : 'a option) =
   match x, exn with
   | None  , None     -> assert false
