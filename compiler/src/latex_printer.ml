@@ -465,6 +465,10 @@ let rec pp_pitem fmt pi =
      F.fprintf fmt eol;
      closebrace fmt ()
   | PTypeAlias (id,ty) -> pp_typealias fmt id ty (**)
+  | PStruct _ -> 
+      print_endline "PStruct case encountered in the latex printer... not implemented yet";
+      assert false
+
 
 let pp_info fmt =
   F.fprintf fmt "@[<v>@[%% The produced LATEX snippet is meant to be included in a@]@ ";

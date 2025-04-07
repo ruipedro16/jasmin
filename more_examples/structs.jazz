@@ -1,0 +1,15 @@
+param int N = 32;
+
+struct ctx {
+    reg ptr u8[N] pub_seed,
+    reg ptr u8[N] sk_seed,
+    stack usize foo
+};
+
+
+// Structs are not yet accepted by the parser as arguments of functions
+export 
+fn foo(/* struct ctx bar */) -> reg usize {
+    reg usize r = 12;
+    return r;
+}

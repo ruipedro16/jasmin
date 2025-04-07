@@ -499,6 +499,10 @@ ptemplate_fundef:
       pdf_body = body; } }
 
 
+pstruct_decl: 
+| STRUCT struct_name=ident LBRACE struct_fields=rtuple(annot_pparamdecl) RBRACE SEMICOLON
+    { { struct_name ; struct_fields } }
+
 (* -------------------------------------------------------------------- *)
 pparam:
 | PARAM ty=ptype x=ident EQ pe=pexpr SEMICOLON
@@ -539,6 +543,7 @@ top:
 | x=pglobal  { Syntax.PGlobal x }
 | x=pexec    { Syntax.Pexec   x }
 | x=prequire { Syntax.Prequire x}
+| x=pstruct_decl { Syntax.PStruct x }
 | TYPE name = ident EQ ty = ptype SEMICOLON
     { Syntax.PTypeAlias (name, ty)}
 | NAMESPACE name = ident LBRACE pfs = loc(top)* RBRACE

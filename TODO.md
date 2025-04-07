@@ -19,3 +19,12 @@
     - [ ] Pretyping
     - [ ] Latex pretty printer
     - [ ] Extraction to EC 
+
+- [ ] Structs
+    - [ ] Parse struct declarations
+    - [ ] Pretyping
+    - [ ] Latex pretty printer
+    - [ ] Extraction to EC: print as a record
+    - [ ] Inline structs in function definitions
+    - [ ] Replace spills/unspills of structs with spills/unspills to all fields of the struct 
+    - [ ] 

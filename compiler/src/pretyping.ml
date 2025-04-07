@@ -51,6 +51,7 @@ type tyerror =
   | UnsupportedZeroExtend of (F.formatter -> unit)
   | InvalidZeroExtend of W.wsize * W.wsize * (F.formatter -> unit)
   | StringError of string
+  | UnkownStructField of string * string
 
 exception TyError of L.t * tyerror
 
@@ -221,6 +222,9 @@ let pp_tyerror fmt (code : tyerror) =
 
   | StringError s ->
     F.fprintf fmt "%s" s
+
+  | UnkownStructField (struct_name, struct_field) ->
+    F.fprintf fmt "Struct %s does not have field %s" struct_name struct_field
 
 (* -------------------------------------------------------------------- *)
 (* Utility functions related to name spaces *)
@@ -2262,7 +2266,12 @@ let rec tt_item arch_info (env : 'asm Env.env) pt : 'asm Env.env =
      let env = Env.exit_namespace env in
      env
   | S.PTypeAlias (id,ty) -> tt_typealias arch_info env id ty
-  | S.PTemplateFundef tf -> assert false (* FIXME: This is not implemented *)
+  | S.PTemplateFundef tf -> 
+    print_endline "S.PTemplateFundef case encountered in the pretyping step... not implemented yet";
+    assert false (* FIXME: TODO: This is not implemented *)
+  | S.PStruct _ -> 
+    print_endline "S.PStruct case encountered in the pretyping step... not implemented yet";
+    assert false (* FIXME: TODO: This is not implemented *)
 
 and tt_file_loc arch_info from env fname =
   fst (tt_file arch_info env from (Some (L.loc fname)) (L.unloc fname))

@@ -315,6 +315,11 @@ type pexec = {
   pex_mem: (int_representation * int_representation) list;
 }
 
+type pstruct_decl = {
+  struct_name: pident;
+  struct_fields: (annotations * paramdecls) list;
+}
+
 (* -------------------------------------------------------------------- *)
 type prequire = string L.located
 
@@ -328,6 +333,7 @@ type pitem =
   | Prequire of (pident option * prequire list)
   | PNamespace of pident * pitem L.located list
   | PTypeAlias of pident * ptype
+  | PStruct of pstruct_decl
 
 (* -------------------------------------------------------------------- *)
 type pprogram = pitem L.located list
