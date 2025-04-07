@@ -20,7 +20,7 @@
 %token RPAREN
 
 %token T_BOOL
-%token T_U8 T_U16 T_U32 T_U64 T_U128 T_U256 T_INT
+%token T_U8 T_U16 T_U32 T_U64 T_U128 T_U256 T_USIZE T_INT
 
 %token SHARP
 %token ALIGNED
@@ -75,6 +75,7 @@
 %token SLASH
 %token STACK
 %token STAR
+%token STRUCT
 %token TO
 %token TRUE
 %token UNALIGNED
@@ -159,13 +160,20 @@ annotations:
 (* ** Type expressions
  * -------------------------------------------------------------------- *)
 
+(* TODO: FIXME: I dont want to have the logic in the parser *)
 utype:
-| T_U8   { Wsize.U8   }
-| T_U16  { Wsize.U16  }
-| T_U32  { Wsize.U32  }
-| T_U64  { Wsize.U64  }
-| T_U128 { Wsize.U128 }
-| T_U256 { Wsize.U256 }
+| T_U8    { Wsize.U8   }
+| T_U16   { Wsize.U16  }
+| T_U32   { Wsize.U32  }
+| T_U64   { Wsize.U64  }
+| T_U128  { Wsize.U128 }
+| T_U256  { Wsize.U256 }
+| T_USIZE { 
+    match !Glob_options.target_arch with 
+    | X86_64 -> Wsize.U64
+    | ARM_M4 -> Wsize.U32
+    | RISCV  -> Wsize.U32
+}
 
 utype_array:
 | ws=utype {TypeWsize ws}
@@ -470,6 +478,27 @@ pfundef:
       pdf_rty  = rty ;
       pdf_body = body; } }
 
+ptemplate_fundef:
+|  pdf_annot = annotations
+    cc=call_conv?
+    FN
+    name = ident
+    LT
+    targs = separated_nonempty_list(COMMA, ident)
+    GT
+    args = parens_tuple(annot_pparamdecl)
+    rty  = prefix(RARROW, tuple(annot_stor_type))?
+    body = pfunbody
+
+  { { pdf_annot;
+      pdf_cc   = cc;
+      pdf_name = name;
+      pdf_templates = targs;
+      pdf_args = args;
+      pdf_rty  = rty ;
+      pdf_body = body; } }
+
+
 (* -------------------------------------------------------------------- *)
 pparam:
 | PARAM ty=ptype x=ident EQ pe=pexpr SEMICOLON
@@ -505,6 +534,7 @@ prequire:
 (* -------------------------------------------------------------------- *)
 top:
 | x=pfundef  { Syntax.PFundef x }
+| x=ptemplate_fundef { Syntax.PTemplateFundef x }
 | x=pparam   { Syntax.PParam  x }
 | x=pglobal  { Syntax.PGlobal x }
 | x=pexec    { Syntax.Pexec   x }

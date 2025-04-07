@@ -26,12 +26,15 @@
 
   let _keywords = [
     "type"  , TYPE   ;
+    "struct", STRUCT ;
+
     "u8"    , T_U8   ;
     "u16"   , T_U16  ;
     "u32"   , T_U32  ;
     "u64"   , T_U64  ;
     "u128"  , T_U128 ;
     "u256"  , T_U256 ;
+    "usize" , T_USIZE;
 
     "bool"  , T_BOOL ;
     "int"   , T_INT  ;
@@ -197,6 +200,7 @@ rule main = parse
   | "!=" { BANGEQ   }
   | "#unaligned" { UNALIGNED   }
   | "#aligned" { ALIGNED   }
+  | "usize" { T_USIZE }
 
   | _ as c  { invalid_char (L.of_lexbuf lexbuf) c }
   | eof     { EOF }

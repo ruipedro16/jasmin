@@ -291,6 +291,16 @@ type pfundef = {
   pdf_body : pfunbody;
 }
 
+type ptemplate_fundef = {
+  pdf_annot : annotations;
+  pdf_cc   : pcall_conv option;
+  pdf_name : pident;
+  pdf_templates: pident list;
+  pdf_args : (annotations * paramdecls) list;
+  pdf_rty  : (annotations * pstotype) list option;
+  pdf_body : pfunbody;
+}
+
 (* -------------------------------------------------------------------- *)
 type gpexpr = 
   | GEword  of pexpr
@@ -311,6 +321,7 @@ type prequire = string L.located
 (* -------------------------------------------------------------------- *)
 type pitem =
   | PFundef of pfundef
+  | PTemplateFundef of ptemplate_fundef
   | PParam of pparam
   | PGlobal of pglobal
   | Pexec of pexec

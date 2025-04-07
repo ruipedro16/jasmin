@@ -389,7 +389,8 @@ let pp_funbody fmt { pdb_instr ; pdb_ret } =
         (pp_list ", " pp_var) ret;
   ) fmt (L.unloc pdb_ret)
 
-let pp_fundef fmt { pdf_cc ; pdf_name ; pdf_args ; pdf_rty ; pdf_body ; pdf_annot } =
+(* Obs: Without the type annotation, OCaml infers that the second argument has type ptemplate_fundef *)
+let pp_fundef fmt ({ pdf_cc ; pdf_name ; pdf_args ; pdf_rty ; pdf_body ; pdf_annot } : pfundef) =
   F.fprintf
     fmt
     "%a%a%a %a(%a)%a %a"
@@ -397,6 +398,19 @@ let pp_fundef fmt { pdf_cc ; pdf_name ; pdf_args ; pdf_rty ; pdf_body ; pdf_anno
     pp_cc pdf_cc
     kw "fn"
     dname (L.unloc pdf_name)
+    (pp_list ", " pp_annot_args) pdf_args
+    pp_rty pdf_rty
+    (pp_inbraces 0 pp_funbody) pdf_body
+
+let pp_template_fundef fmt { pdf_cc ; pdf_name ; pdf_templates; pdf_args ; pdf_rty ; pdf_body ; pdf_annot } = 
+  F.fprintf
+    fmt
+    "%a%a%a %a(%a)%a %a"
+    pp_top_annotations pdf_annot
+    pp_cc pdf_cc
+    kw "fn"
+    dname (L.unloc pdf_name)
+    (* TODO: FIXME: Print the templates here *)
     (pp_list ", " pp_annot_args) pdf_args
     pp_rty pdf_rty
     (pp_inbraces 0 pp_funbody) pdf_body
@@ -432,6 +446,7 @@ let pp_typealias fmt id ty =
 let rec pp_pitem fmt pi =
   match L.unloc pi with
   | PFundef f -> pp_fundef fmt f
+  | PTemplateFundef f -> pp_template_fundef fmt f
   | PParam p  -> pp_param fmt p
   | PGlobal g -> pp_global fmt g
   | Pexec _   -> ()

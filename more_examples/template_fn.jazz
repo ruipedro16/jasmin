@@ -1,0 +1,4 @@
+export fn id<T, U>(reg u64 a) -> reg u64 {
+    a = a;
+    return a;
+}

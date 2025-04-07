@@ -1,0 +1,10 @@
+export fn sum(reg ptr u64[4] a) -> reg usize {
+    inline int i;
+    reg usize sum = 0;
+
+    for i=0 to 4 {
+        sum += a[i];
+    }
+
+    return sum;
+}
