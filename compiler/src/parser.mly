@@ -175,6 +175,8 @@ utype:
     | RISCV  -> Wsize.U32
 }
 
+(* TODO: The word size can be a template *)
+
 utype_array:
 | ws=utype {TypeWsize ws}
 | id=ident {TypeSizeAlias id}
@@ -303,6 +305,11 @@ pexpr_r:
 
 | f=var args=parens_tuple(pexpr)
     { PECall (f, args) }
+
+| f=var LT template_params=separated_nonempty_list(COMMA, ident) GT args=parens_tuple(pexpr)
+    { PETemplateFnCall (f, template_params, args) }
+
+(* TODO: FIXME: Handle the call to a generic function properly *)
 
 | f=prim args=parens_tuple(pexpr)
     { PEPrim (f, args) }

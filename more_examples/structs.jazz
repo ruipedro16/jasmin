@@ -17,7 +17,7 @@ fn map<WORD_SIZE, INLEN>(
 
     for i=0 to INLEN {
         t = out[i];
-        #inline t = func(t); // func is a local function but here we inline it
+        #inline t = func<T, U>(t); // func is a local function but here we inline it
         out[i] = t;
     }
 

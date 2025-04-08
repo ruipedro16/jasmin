@@ -161,6 +161,7 @@ type pexpr_r =
   | PEBool   of bool
   | PEInt    of int_representation
   | PECall   of pident * pexpr list
+  | PETemplateFnCall of  pident * pident list * pexpr list
   | PECombF  of pident * pexpr list
   | PEPrim   of pident * pexpr list
   | PEOp1    of peop1 * pexpr

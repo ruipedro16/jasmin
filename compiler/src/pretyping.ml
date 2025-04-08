@@ -1198,6 +1198,8 @@ let rec tt_expr pd ?(mode=`AllVar) (env : 'asm Env.env) pe =
   | S.PECall _ ->
     rs_tyerror ~loc:(L.loc pe) CallNotAllowed
 
+  | PETemplateFnCall _ -> assert false (* FIXME: Nao sei o que fazer aqui *)
+
   | S.PEPrim _ ->
     rs_tyerror ~loc:(L.loc pe) PrimNotAllowed
 
