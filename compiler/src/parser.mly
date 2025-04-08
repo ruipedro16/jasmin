@@ -349,6 +349,10 @@ plvalue:
 
 (* ** Control instructions
  * -------------------------------------------------------------------- *)
+
+(*
+    Implicits: E.g: ?{} ?{ zf } (I think?)
+ *)
 implicites:
 | QUESTIONMARK s=loc(braces(struct_annot)) { s }
 
@@ -444,12 +448,33 @@ storage:
 %inline pvardecl(S):
 | ty=stor_type vs=separated_nonempty_list(S, loc(decl)) { (ty, vs) }
 
+(*
+ * Declaration of function parameters of type S
+ *
+ * <type> <list of variables> => In this case all variables must be of the same type
+ * 
+ * e.g.
+ * reg ptr u8[3] a b
+ * In this case there is a list of identifiers [a, b]. THis is the same as 
+ * reg ptr u8[3] a, reg ptr u8[3] b
+ *)
 pparamdecl(S):
-    ty=stor_type vs=separated_nonempty_list(S, var) { (ty, vs) }
+| ty=stor_type vs=separated_nonempty_list(S, var) { (ty, vs) }
 
+(* 
+ * Declaration of a function parameter with a list of annotations (may be empty)
+ * e.g.:
+ * reg ptr u8[3] a
+ * #public stack u8 a
+ * #transiet reg u32 a
+ *)
 annot_pparamdecl:
 | a=annotations vd=pparamdecl(empty) { (a,vd) }
 
+
+(*
+    The body of a function is a list of instructions delimited by { } with an optional return value
+ *)
 pfunbody :
 | LBRACE
     is = pinstr*
@@ -522,6 +547,12 @@ pglobal:
 pexec:
 | EXEC pex_name=ident pex_mem=parens_tuple(range) { { pex_name ; pex_mem } }
 
+(* 
+    A range (used in subarrays) is of the form ptr : size 
+    For sample, considering a stack u8[4] array, the subarray 
+    array[1:3] corresponds to the last three elements ==> the subarray 
+    starts and index 1 and has a length of 3
+ *)
 range:
 | ptr=INT COLON size=INT { ptr, size }
 

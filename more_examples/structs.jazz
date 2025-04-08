@@ -7,9 +7,31 @@ struct ctx {
 };
 
 
+#[returnaddress="stack"]
+fn map<WORD_SIZE, INLEN>(
+    reg ptr WORD_SIZE[INLEN] out
+    // (fn: reg T -> reg T) func
+) -> reg ptr WORD_SIZE[INLEN] {
+    inline int i;
+    reg WORD_SIZE t;
+
+    for i=0 to INLEN {
+        t = out[i];
+        #inline t = func(t); // func is a local function but here we inline it
+        out[i] = t;
+    }
+
+    return out;
+}
+
 // Structs are not yet accepted by the parser as arguments of functions
 export 
-fn foo(/* struct ctx bar */) -> reg usize {
+fn foo<T, U>(/* struct ctx bar*/ ) -> reg usize {
+    reg usize r = 12;
+    return r;
+}
+
+export fn bar() -> reg usize {
     reg usize r = 12;
     return r;
 }

@@ -234,6 +234,9 @@ let fully_qualified (stack: (A.symbol * 'a) list) n =
   List.fold_left (fun n (ns, _) -> qualify ns n) n stack
 
 (* -------------------------------------------------------------------- *)
+
+
+(* This module defines an environment for managing various elements in a program*)
 module Env : sig
   type 'asm env
 
@@ -273,6 +276,16 @@ module Env : sig
     val push : 'asm env -> A.pident -> P.pty -> 'asm env
     val get : 'asm env -> A.pident -> P.pty L.located
   end
+
+  (*
+  TODO: Support structs
+  module Structs : sig
+    val push : 'asm env ->  (* Env before pushing info about the struct *)
+                A.pident -> (* name of the struct *)
+                (* (annotations * paramdecls) list -> *) (* Fields of the struct *)
+               'asm env     (* Env after pushing info about the struct *)
+  end
+  *)
 
   module Funs : sig
     val push : 'asm env -> (unit, 'asm) P.pfunc -> P.pty list -> 'asm env
@@ -2247,6 +2260,23 @@ let tt_typealias arch_info env id ty =
   let alias = tt_type arch_info.pd env ty in
   Env.TypeAlias.push env id alias
 
+(*
+  TODO: 
+    - [ ] Pretype each field of the struct 
+    - [ ] Push the struct to the Env 
+
+  Obs: return type is 'asm Env.env (I think)
+ *)
+let tt_struct_decl (env: 'asm Env.env) struct_decl = env
+
+(*
+  TODO:
+  - [ ] Push the template parameters into the env
+  - [ ] Runpretyping on the function (if remove the templates and we get a proper jasmin function and can use the existing function for pretyping)
+  - [ ] Pop the template parameters from the env
+ *)
+let tt_template_fundef (env: 'asm Env.env) f = env
+
 (* -------------------------------------------------------------------- *)
 let rec tt_item arch_info (env : 'asm Env.env) pt : 'asm Env.env =
   match L.unloc pt with
@@ -2266,12 +2296,12 @@ let rec tt_item arch_info (env : 'asm Env.env) pt : 'asm Env.env =
      let env = Env.exit_namespace env in
      env
   | S.PTypeAlias (id,ty) -> tt_typealias arch_info env id ty
-  | S.PTemplateFundef tf -> 
-    print_endline "S.PTemplateFundef case encountered in the pretyping step... not implemented yet";
-    assert false (* FIXME: TODO: This is not implemented *)
-  | S.PStruct _ -> 
-    print_endline "S.PStruct case encountered in the pretyping step... not implemented yet";
-    assert false (* FIXME: TODO: This is not implemented *)
+  | S.PTemplateFundef f -> 
+    print_endline "S.PTemplateFundef case encountered in the pretyping step... not implemented yet but I already know what to do";
+    tt_template_fundef env f
+  | S.PStruct s -> 
+    print_endline "S.PStruct case encountered in the pretyping step... not implemented yet but I already know what to do";
+    tt_struct_decl env s
 
 and tt_file_loc arch_info from env fname =
   fst (tt_file arch_info env from (Some (L.loc fname)) (L.unloc fname))
@@ -2281,6 +2311,7 @@ and tt_file arch_info env from loc fname =
   | None -> env, []
   | Some(env, fname) ->
     let ast   = Parseio.parse_program ~name:fname in
+    print_endline "[DEBUG] PARSE: ok";
     let ast =
       try BatFile.with_file_in fname ast
       with Sys_error(err) ->
