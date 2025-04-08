@@ -292,12 +292,19 @@ type pfundef = {
   pdf_body : pfunbody;
 }
 
+type function_argument = 
+  | RegularJasminArgument of (annotations * paramdecls)
+  | FunctionArgument of pident *                          (* name of the argument (function) *)
+                        ((annotations * pstotype) list) * (* Arguments of the lambda *)
+                        ((annotations * pstotype) list)   (* return type of the lambda ==> The return type is not optional *)
+  | StructArgument of pident * pident
+
 type ptemplate_fundef = {
   pdf_annot : annotations;
   pdf_cc   : pcall_conv option;
   pdf_name : pident;
   pdf_templates: pident list;
-  pdf_args : (annotations * paramdecls) list;
+  pdf_args : function_argument list; (* (annotations * paramdecls) list; *)
   pdf_rty  : (annotations * pstotype) list option;
   pdf_body : pfunbody;
 }

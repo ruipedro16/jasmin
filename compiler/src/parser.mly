@@ -494,6 +494,15 @@ call_conv :
 | EXPORT { `Export }
 | INLINE { `Inline }
 
+(* Here, we also want to support functions as arguments and struct fields *)
+(* The return type is currently annotations * paramdecls *)
+(* which is the same as Jasmin.Annotations.annotations * Jasmin.Syntax.paramdecls *)
+(* *)
+fn_arg:
+| x=annot_pparamdecl { Syntax.RegularJasminArgument x }
+| LPAREN FN COLON x=tuple(annot_stor_type) RARROW y=tuple(annot_stor_type) RPAREN fn_name=ident { FunctionArgument (fn_name, x, y) }
+| STRUCT struct_name=ident var_name=ident { StructArgument (struct_name, var_name) }
+
 pfundef:
 |  pdf_annot = annotations
     cc=call_conv?
@@ -518,7 +527,7 @@ ptemplate_fundef:
     LT
     targs = separated_nonempty_list(COMMA, ident)
     GT
-    args = parens_tuple(annot_pparamdecl)
+    args = parens_tuple(fn_arg)
     rty  = prefix(RARROW, tuple(annot_stor_type))?
     body = pfunbody
 

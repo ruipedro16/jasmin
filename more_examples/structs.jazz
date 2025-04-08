@@ -35,3 +35,21 @@ export fn bar() -> reg usize {
     reg usize r = 12;
     return r;
 }
+
+/* FOw now, FUNCTION AS ARGUMENTS ARE ONLT SUPPORTED IN TEMPLATE FUNCTIONS */
+#[returnaddress="stack"]
+fn map<INLEN>(
+    reg ptr u8[INLEN] out,
+    (fn: reg u8 -> reg u8) func
+) -> reg ptr u8[INLEN] {
+    inline int i;
+    reg u8 t;
+
+    for i=0 to INLEN {
+        t = out[i];
+        t = func(t);
+        out[i] = t;
+    }
+
+    return out;
+}

@@ -406,15 +406,7 @@ let pp_fundef fmt ({ pdf_cc ; pdf_name ; pdf_args ; pdf_rty ; pdf_body ; pdf_ann
 let pp_template_fundef fmt { pdf_cc ; pdf_name ; pdf_templates; pdf_args ; pdf_rty ; pdf_body ; pdf_annot } = 
   F.fprintf
     fmt
-    "%a%a%a %a(%a)%a %a"
-    pp_top_annotations pdf_annot
-    pp_cc pdf_cc
-    kw "fn"
-    dname (L.unloc pdf_name)
-    (* TODO: FIXME: Print the templates here *)
-    (pp_list ", " pp_annot_args) pdf_args
-    pp_rty pdf_rty
-    (pp_inbraces 0 pp_funbody) pdf_body
+    "OLAAA"
 
 let pp_param fmt { ppa_ty ; ppa_name ; ppa_init } =
   F.fprintf fmt "%a %a %a = %a;"

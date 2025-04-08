@@ -51,7 +51,7 @@ type tyerror =
   | UnsupportedZeroExtend of (F.formatter -> unit)
   | InvalidZeroExtend of W.wsize * W.wsize * (F.formatter -> unit)
   | StringError of string
-  | UnkownStructField of string * string
+  | UnkownStructField of string * string (* struct field * struct name *)
 
 exception TyError of L.t * tyerror
 
